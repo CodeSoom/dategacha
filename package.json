@@ -4,7 +4,7 @@
   "description": "DateGacha gives date  ideas for those living \"new normal.\"",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "webpack serve"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,12 @@
   "bugs": {
     "url": "https://github.com/smilee/project-react-2-smilee/issues"
   },
-  "homepage": "https://github.com/smilee/project-react-2-smilee#readme"
+  "homepage": "https://github.com/smilee/project-react-2-smilee#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "babel-loader": "^8.2.2",
+    "webpack": "^5.9.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
+  }
 }
