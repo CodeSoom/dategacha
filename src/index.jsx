@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 const element = (
   <div>
-    <p>Hello, world!</p>
+    <button type="button">O</button>
   </div>
 );
 
