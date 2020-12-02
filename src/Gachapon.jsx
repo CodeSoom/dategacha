@@ -111,7 +111,7 @@ const CoinCover = styled.div({
   backgroundColor: '#dff0fa',
 });
 
-const Handle = styled.button({
+const Handle = styled.div({
   position: 'absolute',
   top: '55.52vh',
   left: '27.9vh',
@@ -200,6 +200,7 @@ export default function Gachapon({ onOpen }) {
           data-testid="handle"
           className={state}
           onClick={handleClickHandle}
+          tabIndex="0"
         />
         <Capsule
           data-testid="capsule"
