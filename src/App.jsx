@@ -1,19 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import ideas from '../fixtures/ideas';
+import styled from '@emotion/styled';
 
-function handleClick(event) {
-  event.preventDefault();
+import Gachapon from './Gachapon';
 
-  document.querySelector('[data-testid="idea"]').innerHTML = ideas[Math.floor(Math.random() * 30)].description;
-}
+const Container = styled.div({
+  maxWidth: '600px',
+  height: '100%',
+  margin: '0 auto',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
 
 export default function App() {
+  const [idea, setIdea] = useState('');
+
+  function onOpen(content) {
+    setIdea(content);
+  }
+
   return (
-    <>
+    <Container>
       <p>뉴노멀 시대를 살아가는 우리의 추억 생성기, 데잇가챠</p>
-      <button type="button" onClick={handleClick}>데이트 아이디어 얻기</button>
-      <p data-testid="idea" />
-    </>
+      <p data-testid="idea">{ idea }</p>
+      <Gachapon onOpen={onOpen} />
+    </Container>
   );
 }
