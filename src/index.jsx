@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import App from './App';
+
 const element = (
-  <div>
-    <p>Hello, world!</p>
-  </div>
+  <App />
 );
 
 ReactDOM.render(element, document.getElementById('app'));
