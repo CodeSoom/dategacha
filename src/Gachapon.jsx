@@ -90,6 +90,12 @@ const Coin = styled.div({
     transition: 'opacity 0.4s',
     animation: `${MoveUpDown} 1.2s linear infinite`,
   },
+  '&.spinning': {
+    opacity: 0,
+    top: '51.8vh',
+    left: '26.8vh',
+    transition: 'top 0.2s 0.0s, left 0.1s 0.2s, opacity 0.2s 0.2s',
+  },
   '& div': {
     position: 'relative',
     top: '0.5vh',
@@ -125,7 +131,11 @@ const Handle = styled.div({
   cursor: 'pointer',
   '&.spinning': {
     pointerEvents: 'none',
-    animation: `${Spin} 2s ease-in-out`,
+    animation: `${Spin} 1s ease-out`,
+    animationDelay: '0.2s',
+  },
+  '&.spun': {
+    pointerEvents: 'none',
   },
 });
 
