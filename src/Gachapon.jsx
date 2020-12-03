@@ -57,6 +57,7 @@ const Shake = keyframes`
 
 const Container = styled.div({
   width: '100%',
+  fontFamily: 'Stylish, sans-serif',
 });
 
 const Machine = styled.img({
@@ -74,6 +75,44 @@ const ComponentsContainer = styled.div({
   width: '39vh',
   height: '80vh',
   transform: 'translateX(-50%)',
+});
+
+const Screen = styled.div({
+  position: 'absolute',
+  left: '4.6vh',
+  top: '5.1vh',
+  width: '29.8vh',
+  height: '41vh',
+  overflow: 'hidden',
+  '&.ideas img': {
+    top: '-41vh',
+    transition: 'top 0.4s ease-in-out',
+  },
+  '&.ideas ul': {
+    opacity: 1,
+    transition: 'opacity 0.4s 0.4s ease-in',
+  },
+});
+
+const Logo = styled.img({
+  position: 'absolute',
+  top: '1.8vh',
+  width: '29.8vh',
+});
+
+const Ideas = styled.ul({
+  opacity: 0,
+  position: 'relative',
+  margin: 0,
+  padding: '36px 16px 24px',
+  listStyle: 'none',
+  textAlign: 'center',
+  '& li': {
+    marginBottom: '12px',
+    wordBreak: 'keep-all',
+    fontSize: '1.5em',
+    color: '#fcd2c2',
+  },
 });
 
 const Coin = styled.div({
@@ -170,8 +209,10 @@ const CapsuleCover = styled.div({
   backgroundColor: '#fcd2c2',
 });
 
-export default function Gachapon({ onOpen }) {
+export default function Gachapon() {
   const [state, setState] = useState('reset');
+  const [screen, setScreen] = useState('title');
+  const [threeIdeas, setThreeIdeas] = useState([]);
 
   function handleClickHandle(event) {
     event.preventDefault();
@@ -185,7 +226,9 @@ export default function Gachapon({ onOpen }) {
   function handleClickCapsule(event) {
     event.preventDefault();
 
-    onOpen(ideas[Math.floor(Math.random() * 30)].description);
+    setScreen('ideas');
+
+    setThreeIdeas([...threeIdeas, ideas[Math.floor(Math.random() * 30)].description]);
 
     setState('reset');
   }
@@ -201,6 +244,19 @@ export default function Gachapon({ onOpen }) {
         alt="데잇가챠"
       />
       <ComponentsContainer>
+        <Screen className={screen}>
+          <Logo
+            srcSet="../assets/dategacha.png 480w,
+            ../assets/dategacha@4x.png 800w"
+            sizes="(max-width: 600px) 480px,
+           800px"
+            src="../assets/dategacha.png"
+            alt="로고"
+          />
+          <Ideas>
+            { threeIdeas.map((idea) => <li>{idea}</li>) }
+          </Ideas>
+        </Screen>
         <Coin
           data-testid="coin"
           className={state}
