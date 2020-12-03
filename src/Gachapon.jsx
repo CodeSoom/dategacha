@@ -113,7 +113,7 @@ const CoinCover = styled.div({
 
 const Handle = styled.div({
   position: 'absolute',
-  top: '55.52vh',
+  top: '55.5vh',
   left: '27.9vh',
   width: '2.1vh',
   height: '8vh',
@@ -124,6 +124,7 @@ const Handle = styled.div({
   outline: 'none',
   cursor: 'pointer',
   '&.spinning': {
+    pointerEvents: 'none',
     animation: `${Spin} 2s ease-in-out`,
   },
 });
@@ -139,6 +140,7 @@ const Capsule = styled.img({
   '&.spinning': {
     display: 'block',
     opacity: 0,
+    pointerEvents: 'none',
     animation: `${Appear} 1s ease-in`,
     animationDelay: '1s',
   },
