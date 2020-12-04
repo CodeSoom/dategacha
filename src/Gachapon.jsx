@@ -86,11 +86,11 @@ const Screen = styled.div({
   overflow: 'hidden',
   '&.ideas img': {
     top: '-41vh',
-    transition: 'top 0.4s ease-in-out',
+    transition: 'top 0.2s ease-in-out',
   },
   '&.ideas ul': {
     opacity: 1,
-    transition: 'opacity 0.4s 0.4s ease-in',
+    transition: 'opacity 0.3s 0.4s ease-in',
   },
 });
 
@@ -104,13 +104,13 @@ const Ideas = styled.ul({
   opacity: 0,
   position: 'relative',
   margin: 0,
-  padding: '36px 16px 24px',
+  padding: '3vh 1.8vh 2vh',
   listStyle: 'none',
   textAlign: 'center',
   '& li': {
-    marginBottom: '12px',
+    marginBottom: '1.2vh',
     wordBreak: 'keep-all',
-    fontSize: '1.5em',
+    fontSize: '2.4vh',
     color: '#fcd2c2',
   },
 });
@@ -134,6 +134,9 @@ const Coin = styled.div({
     top: '51.8vh',
     left: '26.8vh',
     transition: 'top 0.2s 0.0s, left 0.1s 0.2s, opacity 0.2s 0.2s',
+  },
+  '&.empty': {
+    opacity: 0,
   },
   '& div': {
     position: 'relative',
@@ -176,6 +179,9 @@ const Handle = styled.div({
   '&.spun': {
     pointerEvents: 'none',
   },
+  '&.empty': {
+    cursor: 'default',
+  },
 });
 
 const Capsule = styled.img({
@@ -190,13 +196,16 @@ const Capsule = styled.img({
     display: 'block',
     opacity: 0,
     pointerEvents: 'none',
-    animation: `${Appear} 1s ease-in`,
+    animation: `${Appear} 0.4s ease-in`,
     animationDelay: '1s',
   },
   '&.spun': {
     display: 'block',
     opacity: 1,
     animation: `${Shake} 0.4s ease-in-out infinite`,
+  },
+  '&.empty': {
+    display: 'none',
   },
 });
 
@@ -210,27 +219,73 @@ const CapsuleCover = styled.div({
 });
 
 export default function Gachapon() {
-  const [state, setState] = useState('reset');
-  const [screen, setScreen] = useState('title');
-  const [threeIdeas, setThreeIdeas] = useState([]);
+  const capsules = localStorage.getItem('capsules');
+  if (!capsules) {
+    localStorage.setItem('capsules', JSON.stringify([]));
+  }
+
+  const [state, setState] = useState(capsules && Array.from(JSON.parse(capsules)).length === 3 ? 'empty' : 'reset');
+  const [screen, setScreen] = useState(capsules && Array.from(JSON.parse(capsules)).length > 0 ? 'ideas' : 'title');
+  const [threeIdeas, setThreeIdeas] = useState(capsules && Array.from(JSON.parse(capsules)));
 
   function handleClickHandle(event) {
     event.preventDefault();
 
+    const current = localStorage.getItem('capsules');
+    if (current && Array.from(JSON.parse(current)).length === 3) {
+      return;
+    }
+
     setState('spinning');
+
     setTimeout(() => {
       setState('spun');
-    }, 2000);
+    }, 1400);
   }
 
   function handleClickCapsule(event) {
     event.preventDefault();
 
+    const current = localStorage.getItem('capsules');
+    if (current && Array.from(JSON.parse(current)).length === 3) {
+      return;
+    }
+
+    const idea = ideas[Math.floor(Math.random() * 30)];
+    const date = new Date();
+
+    localStorage.setItem(
+      'capsules',
+      JSON.stringify(
+        Array.from(JSON.parse(current))
+          .filter((capsule) => capsule.date === date.toLocaleDateString()),
+      ),
+    );
+
+    const filteredCapsules = localStorage.getItem('capsules');
+
+    if (Array.from(JSON.parse(filteredCapsules)).length < 3) {
+      localStorage.setItem(
+        'capsules',
+        JSON.stringify(
+          [
+            ...Array.from(JSON.parse(filteredCapsules)),
+            { ...idea, date: date.toLocaleDateString() },
+          ],
+        ),
+      );
+    }
+
+    const newCapsules = localStorage.getItem('capsules');
+
     setScreen('ideas');
 
-    setThreeIdeas([...threeIdeas, ideas[Math.floor(Math.random() * 30)].description]);
-
-    setState('reset');
+    setThreeIdeas(Array.from(JSON.parse(newCapsules)));
+    if (newCapsules && Array.from(JSON.parse(newCapsules)).length === 3) {
+      setState('empty');
+    } else {
+      setState('reset');
+    }
   }
 
   return (
@@ -254,7 +309,7 @@ export default function Gachapon() {
             alt="로고"
           />
           <Ideas>
-            { threeIdeas.map((idea) => <li>{idea}</li>) }
+            { threeIdeas.map((idea) => <li>{idea.description}</li>) }
           </Ideas>
         </Screen>
         <Coin
