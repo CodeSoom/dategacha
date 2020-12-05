@@ -56,6 +56,10 @@ const Shake = keyframes`
   100% { transform: translate(1px, -2px) rotate(-1deg); }
 `;
 
+const Blink = keyframes`
+  50% { opacity: 0 }
+`;
+
 const Container = styled.div({
   width: '100%',
   fontFamily: 'Stylish, sans-serif',
@@ -118,11 +122,18 @@ const Ideas = styled.ul({
 
 const CallToAction = styled.p({
   display: 'none',
+  position: 'absolute',
+  bottom: '1vh',
+  left: '50%',
+  margin: 0,
+  width: '100%',
   fontSize: '3.6vh',
   textAlign: 'center',
   color: '#fff',
+  transform: 'translateX(-50%)',
   '&.empty': {
     display: 'block',
+    animation: `${Blink} 1.6s linear 2`,
   },
 });
 
