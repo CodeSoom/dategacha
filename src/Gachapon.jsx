@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import ideas from '../fixtures/ideas';
 
 const MoveUpDown = keyframes`
@@ -110,8 +111,18 @@ const Ideas = styled.ul({
   '& li': {
     marginBottom: '1.2vh',
     wordBreak: 'keep-all',
-    fontSize: '2.4vh',
+    fontSize: '2.8vh',
     color: '#fcd2c2',
+  },
+});
+
+const CallToAction = styled.p({
+  display: 'none',
+  fontSize: '3.6vh',
+  textAlign: 'center',
+  color: '#fff',
+  '&.empty': {
+    display: 'block',
   },
 });
 
@@ -219,20 +230,17 @@ const CapsuleCover = styled.div({
 });
 
 export default function Gachapon() {
-  const capsules = localStorage.getItem('capsules');
-  if (!capsules) {
-    localStorage.setItem('capsules', JSON.stringify([]));
-  }
+  const date = new Date();
+  const [capsules, setCapsules] = useLocalStorage('capsules', () => (localStorage.getItem('capsules') ? JSON.parse(localStorage.getItem('capsules')).filter((capsule) => capsule.date === date.toLocaleDateString())
+    : []));
 
-  const [state, setState] = useState(capsules && Array.from(JSON.parse(capsules)).length === 3 ? 'empty' : 'reset');
-  const [screen, setScreen] = useState(capsules && Array.from(JSON.parse(capsules)).length > 0 ? 'ideas' : 'title');
-  const [threeIdeas, setThreeIdeas] = useState(capsules && Array.from(JSON.parse(capsules)));
+  const [state, setState] = useState(capsules.length === 3 ? 'empty' : 'reset');
+  const [screen, setScreen] = useState(capsules.length > 0 ? 'ideas' : 'title');
 
   function handleClickHandle(event) {
     event.preventDefault();
 
-    const current = localStorage.getItem('capsules');
-    if (current && Array.from(JSON.parse(current)).length === 3) {
+    if (capsules && capsules.length === 3) {
       return;
     }
 
@@ -246,42 +254,21 @@ export default function Gachapon() {
   function handleClickCapsule(event) {
     event.preventDefault();
 
-    const current = localStorage.getItem('capsules');
-    if (current && Array.from(JSON.parse(current)).length === 3) {
+    if (capsules.length === 3) {
       return;
     }
 
     const idea = ideas[Math.floor(Math.random() * 30)];
-    const date = new Date();
 
-    localStorage.setItem(
-      'capsules',
-      JSON.stringify(
-        Array.from(JSON.parse(current))
-          .filter((capsule) => capsule.date === date.toLocaleDateString()),
-      ),
-    );
-
-    const filteredCapsules = localStorage.getItem('capsules');
-
-    if (Array.from(JSON.parse(filteredCapsules)).length < 3) {
-      localStorage.setItem(
-        'capsules',
-        JSON.stringify(
-          [
-            ...Array.from(JSON.parse(filteredCapsules)),
-            { ...idea, date: date.toLocaleDateString() },
-          ],
-        ),
-      );
+    if (capsules.length === 0) {
+      setScreen('ideas');
     }
 
-    const newCapsules = localStorage.getItem('capsules');
+    setCapsules(
+      [...capsules, { ...idea, date: date.toLocaleDateString() }],
+    );
 
-    setScreen('ideas');
-
-    setThreeIdeas(Array.from(JSON.parse(newCapsules)));
-    if (newCapsules && Array.from(JSON.parse(newCapsules)).length === 3) {
+    if (capsules.length === 2) {
       setState('empty');
     } else {
       setState('reset');
@@ -309,8 +296,9 @@ export default function Gachapon() {
             alt="로고"
           />
           <Ideas>
-            { threeIdeas.map((idea) => <li>{idea.description}</li>) }
+            { capsules.map((idea) => <li>{idea.description}</li>) }
           </Ideas>
+          <CallToAction className={state}>하나 골라서 고고고!</CallToAction>
         </Screen>
         <Coin
           data-testid="coin"
