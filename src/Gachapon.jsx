@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import ideas from '../fixtures/ideas';
 
 const MoveUpDown = keyframes`
@@ -57,6 +58,7 @@ const Shake = keyframes`
 
 const Container = styled.div({
   width: '100%',
+  fontFamily: 'Stylish, sans-serif',
 });
 
 const Machine = styled.img({
@@ -76,6 +78,54 @@ const ComponentsContainer = styled.div({
   transform: 'translateX(-50%)',
 });
 
+const Screen = styled.div({
+  position: 'absolute',
+  left: '4.6vh',
+  top: '5.1vh',
+  width: '29.8vh',
+  height: '41vh',
+  overflow: 'hidden',
+  '&.ideas img': {
+    top: '-41vh',
+    transition: 'top 0.2s ease-in-out',
+  },
+  '&.ideas ul': {
+    opacity: 1,
+    transition: 'opacity 0.3s 0.4s ease-in',
+  },
+});
+
+const Logo = styled.img({
+  position: 'absolute',
+  top: '1.8vh',
+  width: '29.8vh',
+});
+
+const Ideas = styled.ul({
+  opacity: 0,
+  position: 'relative',
+  margin: 0,
+  padding: '3vh 1.8vh 2vh',
+  listStyle: 'none',
+  textAlign: 'center',
+  '& li': {
+    marginBottom: '1.2vh',
+    wordBreak: 'keep-all',
+    fontSize: '2.8vh',
+    color: '#fcd2c2',
+  },
+});
+
+const CallToAction = styled.p({
+  display: 'none',
+  fontSize: '3.6vh',
+  textAlign: 'center',
+  color: '#fff',
+  '&.empty': {
+    display: 'block',
+  },
+});
+
 const Coin = styled.div({
   opacity: 0,
   position: 'relative',
@@ -89,6 +139,15 @@ const Coin = styled.div({
     opacity: 1,
     transition: 'opacity 0.4s',
     animation: `${MoveUpDown} 1.2s linear infinite`,
+  },
+  '&.spinning': {
+    opacity: 0,
+    top: '51.8vh',
+    left: '26.8vh',
+    transition: 'top 0.2s 0.0s, left 0.1s 0.2s, opacity 0.2s 0.2s',
+  },
+  '&.empty': {
+    opacity: 0,
   },
   '& div': {
     position: 'relative',
@@ -111,9 +170,9 @@ const CoinCover = styled.div({
   backgroundColor: '#dff0fa',
 });
 
-const Handle = styled.button({
+const Handle = styled.div({
   position: 'absolute',
-  top: '55.52vh',
+  top: '55.5vh',
   left: '27.9vh',
   width: '2.1vh',
   height: '8vh',
@@ -124,7 +183,15 @@ const Handle = styled.button({
   outline: 'none',
   cursor: 'pointer',
   '&.spinning': {
-    animation: `${Spin} 2s ease-in-out`,
+    pointerEvents: 'none',
+    animation: `${Spin} 1s ease-out`,
+    animationDelay: '0.2s',
+  },
+  '&.spun': {
+    pointerEvents: 'none',
+  },
+  '&.empty': {
+    cursor: 'default',
   },
 });
 
@@ -139,13 +206,17 @@ const Capsule = styled.img({
   '&.spinning': {
     display: 'block',
     opacity: 0,
-    animation: `${Appear} 1s ease-in`,
+    pointerEvents: 'none',
+    animation: `${Appear} 0.4s ease-in`,
     animationDelay: '1s',
   },
   '&.spun': {
     display: 'block',
     opacity: 1,
     animation: `${Shake} 0.4s ease-in-out infinite`,
+  },
+  '&.empty': {
+    display: 'none',
   },
 });
 
@@ -158,24 +229,50 @@ const CapsuleCover = styled.div({
   backgroundColor: '#fcd2c2',
 });
 
-export default function Gachapon({ onOpen }) {
-  const [state, setState] = useState('reset');
+export default function Gachapon() {
+  const date = new Date();
+  const [capsules, setCapsules] = useLocalStorage('capsules', () => (localStorage.getItem('capsules') ? JSON.parse(localStorage.getItem('capsules')).filter((capsule) => capsule.date === date.toLocaleDateString())
+    : []));
+
+  const [state, setState] = useState(capsules.length === 3 ? 'empty' : 'reset');
+  const [screen, setScreen] = useState(capsules.length > 0 ? 'ideas' : 'title');
 
   function handleClickHandle(event) {
     event.preventDefault();
 
+    if (capsules && capsules.length === 3) {
+      return;
+    }
+
     setState('spinning');
+
     setTimeout(() => {
       setState('spun');
-    }, 2000);
+    }, 1400);
   }
 
   function handleClickCapsule(event) {
     event.preventDefault();
 
-    onOpen(ideas[Math.floor(Math.random() * 30)].description);
+    if (capsules.length === 3) {
+      return;
+    }
 
-    setState('reset');
+    const idea = ideas[Math.floor(Math.random() * 30)];
+
+    if (capsules.length === 0) {
+      setScreen('ideas');
+    }
+
+    setCapsules(
+      [...capsules, { ...idea, date: date.toLocaleDateString() }],
+    );
+
+    if (capsules.length === 2) {
+      setState('empty');
+    } else {
+      setState('reset');
+    }
   }
 
   return (
@@ -189,6 +286,20 @@ export default function Gachapon({ onOpen }) {
         alt="데잇가챠"
       />
       <ComponentsContainer>
+        <Screen className={screen}>
+          <Logo
+            srcSet="../assets/dategacha.png 480w,
+            ../assets/dategacha@4x.png 800w"
+            sizes="(max-width: 600px) 480px,
+           800px"
+            src="../assets/dategacha.png"
+            alt="로고"
+          />
+          <Ideas>
+            { capsules.map((idea) => <li>{idea.description}</li>) }
+          </Ideas>
+          <CallToAction className={state}>하나 골라서 고고고!</CallToAction>
+        </Screen>
         <Coin
           data-testid="coin"
           className={state}
@@ -200,6 +311,7 @@ export default function Gachapon({ onOpen }) {
           data-testid="handle"
           className={state}
           onClick={handleClickHandle}
+          tabIndex="0"
         />
         <Capsule
           data-testid="capsule"
