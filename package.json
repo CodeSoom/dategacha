@@ -1,7 +1,7 @@
 {
   "name": "date-gacha",
   "version": "0.0.1",
-  "description": "DateGacha gives date  ideas for those living \"new normal.\"",
+  "description": "뉴노멀을 살아가는 우리의 추억 생성기",
   "main": "index.js",
   "scripts": {
     "start": "webpack serve",
