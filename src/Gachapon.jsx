@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
-
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import ideas from '../fixtures/ideas';
 
 const MoveUpDown = keyframes`
   0%, 100% {
@@ -240,52 +237,13 @@ const CapsuleCover = styled.div({
   backgroundColor: '#fcd2c2',
 });
 
-export default function Gachapon() {
-  const date = new Date();
-  const [capsules, setCapsules] = useLocalStorage('capsules', () => (localStorage.getItem('capsules') ? JSON.parse(localStorage.getItem('capsules')).filter((capsule) => capsule.date === date.toLocaleDateString())
-    : []));
-
-  const [state, setState] = useState(capsules.length === 3 ? 'empty' : 'reset');
-  const [screen, setScreen] = useState(capsules.length > 0 ? 'ideas' : 'title');
-
-  function handleClickHandle(event) {
-    event.preventDefault();
-
-    if (capsules && capsules.length === 3) {
-      return;
-    }
-
-    setState('spinning');
-
-    setTimeout(() => {
-      setState('spun');
-    }, 1400);
-  }
-
-  function handleClickCapsule(event) {
-    event.preventDefault();
-
-    if (capsules.length === 3) {
-      return;
-    }
-
-    const idea = ideas[Math.floor(Math.random() * 30)];
-
-    if (capsules.length === 0) {
-      setScreen('ideas');
-    }
-
-    setCapsules(
-      [...capsules, { ...idea, date: date.toLocaleDateString() }],
-    );
-
-    if (capsules.length === 2) {
-      setState('empty');
-    } else {
-      setState('reset');
-    }
-  }
-
+export default function Gachapon({
+  gachapon,
+  capsules,
+  screen,
+  onClickHandle,
+  onClickCapsule,
+}) {
   return (
     <Container>
       <Machine
@@ -307,27 +265,27 @@ export default function Gachapon() {
             alt="로고"
           />
           <Ideas>
-            { capsules.map((idea) => <li>{idea.description}</li>) }
+            { capsules && capsules.map((idea) => <li>{idea.description}</li>) }
           </Ideas>
-          <CallToAction className={state}>하나 골라서 고고고!</CallToAction>
+          <CallToAction className={gachapon}>하나 골라서 고고고!</CallToAction>
         </Screen>
         <Coin
           data-testid="coin"
-          className={state}
+          className={gachapon}
         >
           <div />
         </Coin>
         <CoinCover />
         <Handle
           data-testid="handle"
-          className={state}
-          onClick={handleClickHandle}
+          className={gachapon}
+          onClick={onClickHandle}
           tabIndex="0"
         />
         <Capsule
           data-testid="capsule"
-          className={state}
-          onClick={handleClickCapsule}
+          className={gachapon}
+          onClick={onClickCapsule}
           srcSet="../assets/capsule.png 480w,
              ../assets/capsule@4x.png 800w"
           sizes="(max-width: 600px) 480px,
