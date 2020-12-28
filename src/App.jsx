@@ -42,6 +42,12 @@ export default function App() {
   function handleClickHandle(event) {
     event.preventDefault();
 
+    const elementHandle = event.target;
+
+    if (elementHandle.classList.contains('spinning') || elementHandle.classList.contains('spun')) {
+      return;
+    }
+
     if (capsules && capsules.length === 3) {
       return;
     }
@@ -55,6 +61,12 @@ export default function App() {
 
   function handleClickCapsule(event) {
     event.preventDefault();
+
+    const elementCapsule = event.target;
+
+    if (elementCapsule.classList.contains('spinning')) {
+      return;
+    }
 
     if (capsules.length === 3) {
       return;

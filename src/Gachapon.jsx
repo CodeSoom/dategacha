@@ -191,12 +191,8 @@ const Handle = styled.div({
   outline: 'none',
   cursor: 'pointer',
   '&.spinning': {
-    pointerEvents: 'none',
     animation: `${Spin} 1s ease-out`,
     animationDelay: '0.2s',
-  },
-  '&.spun': {
-    pointerEvents: 'none',
   },
   '&.empty': {
     cursor: 'default',
@@ -214,7 +210,6 @@ const Capsule = styled.img({
   '&.spinning': {
     display: 'block',
     opacity: 0,
-    pointerEvents: 'none',
     animation: `${Appear} 0.4s ease-in`,
     animationDelay: '1s',
   },
