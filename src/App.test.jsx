@@ -1,38 +1,18 @@
 import React from 'react';
 
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
+import { ContextExclusionPlugin } from 'webpack';
 import App from './App';
 
-describe('Gachapon', () => {
+describe('App', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  function renderApp() {
-    const { getByTestId } = render(<App />);
+  it('should render App', () => {
+    const { container } = render(<App />);
 
-    return {
-      handle: getByTestId('handle'),
-      capsule: getByTestId('capsule'),
-    };
-  }
-
-  const { handle, capsule } = renderApp();
-  const handleChangeState = jest.fn();
-
-  context('when handle is clicked', () => {
-    it('calls handleChangeState', () => {
-      fireEvent.click(handle);
-      expect(capsule).not.toBeNull();
-      expect(handleChangeState).toHaveBeenCalled();
-    });
-  });
-
-  context('when handle is spinning', () => {
-    it('does not call handleChangeState', () => {
-      fireEvent.click(handle);
-      expect(handleChangeState).not.toBeCalled();
-    });
+    expect(container).not.toBeNull();
   });
 });

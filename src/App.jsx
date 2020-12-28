@@ -41,10 +41,7 @@ export default function App() {
 
   function handleClickHandle(event) {
     event.preventDefault();
-
-    const elementHandle = event.target;
-
-    if (elementHandle.classList.contains('spinning') || elementHandle.classList.contains('spun')) {
+    if (gachapon === 'spun') {
       return;
     }
 
@@ -62,9 +59,7 @@ export default function App() {
   function handleClickCapsule(event) {
     event.preventDefault();
 
-    const elementCapsule = event.target;
-
-    if (elementCapsule.classList.contains('spinning')) {
+    if (gachapon === 'spinning') {
       return;
     }
 

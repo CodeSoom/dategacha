@@ -86,15 +86,17 @@ const Screen = styled.div({
   width: '29.8vh',
   height: '41vh',
   overflow: 'hidden',
-  '&.ideas img': {
+
+}, ({ screenState }) => (screenState === 'ideas' ? {
+  img: {
     top: '-41vh',
     transition: 'top 0.2s ease-in-out',
   },
-  '&.ideas ul': {
+  ul: {
     opacity: 1,
     transition: 'opacity 0.3s 0.4s ease-in',
   },
-});
+} : {}));
 
 const Logo = styled.img({
   position: 'absolute',
@@ -128,10 +130,15 @@ const CallToAction = styled.p({
   textAlign: 'center',
   color: '#fff',
   transform: 'translateX(-50%)',
-  '&.empty': {
-    display: 'block',
-    animation: `${Blink} 1.6s linear 2`,
-  },
+}, ({ gachaponState }) => {
+  const styles = {
+    empty: {
+      display: 'block',
+      animation: `${Blink} 1.6s linear 2`,
+    },
+  };
+
+  return styles[gachaponState] || {};
 });
 
 const Coin = styled.div({
@@ -143,20 +150,6 @@ const Coin = styled.div({
   height: '5vh',
   borderRadius: '50%',
   backgroundColor: '#f6dc62',
-  '&.reset': {
-    opacity: 1,
-    transition: 'opacity 0.4s',
-    animation: `${MoveUpDown} 1.2s linear infinite`,
-  },
-  '&.spinning': {
-    opacity: 0,
-    top: '51.8vh',
-    left: '26.8vh',
-    transition: 'top 0.2s 0.0s, left 0.1s 0.2s, opacity 0.2s 0.2s',
-  },
-  '&.empty': {
-    opacity: 0,
-  },
   '& div': {
     position: 'relative',
     top: '0.5vh',
@@ -167,6 +160,25 @@ const Coin = styled.div({
     borderRadius: '50%',
     boxSizing: 'border-box',
   },
+}, ({ gachaponState }) => {
+  const styles = {
+    reset: {
+      opacity: 1,
+      transition: 'opacity 0.4s',
+      animation: `${MoveUpDown} 1.2s linear infinite`,
+    },
+    spinning: {
+      opacity: 0,
+      top: '51.8vh',
+      left: '26.8vh',
+      transition: 'top 0.2s 0.0s, left 0.1s 0.2s, opacity 0.2s 0.2s',
+    },
+    empty: {
+      opacity: 0,
+    },
+  };
+
+  return styles[gachaponState] || {};
 });
 
 const CoinCover = styled.div({
@@ -190,13 +202,18 @@ const Handle = styled.div({
   transform: 'rotate(45deg)',
   outline: 'none',
   cursor: 'pointer',
-  '&.spinning': {
-    animation: `${Spin} 1s ease-out`,
-    animationDelay: '0.2s',
-  },
-  '&.empty': {
-    cursor: 'default',
-  },
+}, ({ gachaponState }) => {
+  const styles = {
+    spinning: {
+      animation: `${Spin} 1s ease-out`,
+      animationDelay: '0.2s',
+    },
+    empty: {
+      cursor: 'default',
+    },
+  };
+
+  return styles[gachaponState] || {};
 });
 
 const Capsule = styled.img({
@@ -207,20 +224,25 @@ const Capsule = styled.img({
   width: '12vh',
   outline: 'none',
   cursor: 'pointer',
-  '&.spinning': {
-    display: 'block',
-    opacity: 0,
-    animation: `${Appear} 0.4s ease-in`,
-    animationDelay: '1s',
-  },
-  '&.spun': {
-    display: 'block',
-    opacity: 1,
-    animation: `${Shake} 0.4s ease-in-out infinite`,
-  },
-  '&.empty': {
-    display: 'none',
-  },
+}, ({ gachaponState }) => {
+  const styles = {
+    spinning: {
+      display: 'block',
+      opacity: 0,
+      animation: `${Appear} 0.4s ease-in`,
+      animationDelay: '1s',
+    },
+    spun: {
+      display: 'block',
+      opacity: 1,
+      animation: `${Shake} 0.4s ease-in-out infinite`,
+    },
+    empty: {
+      display: 'none',
+    },
+  };
+
+  return styles[gachaponState] || {};
 });
 
 const CapsuleCover = styled.div({
@@ -250,7 +272,10 @@ export default function Gachapon({
         alt="데잇가챠"
       />
       <ComponentsContainer>
-        <Screen className={screen}>
+        <Screen
+          data-testid="screen"
+          screenState={screen}
+        >
           <Logo
             srcSet="../assets/dategacha.png 480w,
             ../assets/dategacha@4x.png 800w"
@@ -260,26 +285,26 @@ export default function Gachapon({
             alt="로고"
           />
           <Ideas>
-            { capsules && capsules.map((idea) => <li>{idea.description}</li>) }
+            { capsules && capsules.map((idea) => <li key={idea.id}>{idea.description}</li>) }
           </Ideas>
-          <CallToAction className={gachapon}>하나 골라서 고고고!</CallToAction>
+          <CallToAction gachaponState={gachapon}>하나 골라서 고고고!</CallToAction>
         </Screen>
         <Coin
           data-testid="coin"
-          className={gachapon}
+          gachaponState={gachapon}
         >
           <div />
         </Coin>
         <CoinCover />
         <Handle
           data-testid="handle"
-          className={gachapon}
+          gachaponState={gachapon}
           onClick={onClickHandle}
           tabIndex="0"
         />
         <Capsule
           data-testid="capsule"
-          className={gachapon}
+          gachaponState={gachapon}
           onClick={onClickCapsule}
           srcSet="../assets/capsule.png 480w,
              ../assets/capsule@4x.png 800w"
