@@ -2,10 +2,17 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
+import { ContextExclusionPlugin } from 'webpack';
 import App from './App';
 
-test('App', () => {
-  const { container } = render(<App />);
+describe('App', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  expect(container).toHaveTextContent('뉴노멀 시대를 살아가는 우리의 추억 생성기');
+  it('should render App', () => {
+    const { container } = render(<App />);
+
+    expect(container).not.toBeNull();
+  });
 });

@@ -3,6 +3,9 @@ module.exports = {
     'jest-plugin-context/setup',
     './jest.setup',
   ],
+  snapshotSerializers: [
+    '@emotion/jest/serializer',
+  ],
   coverageThreshold: {
     global: {
       branches: 100,
